@@ -48,6 +48,25 @@ dependencies {
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.0'
 }
 
+tasks {
+    processResources {
+        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty 'spring.profiles.active', System.getProperty('spring.profiles.active', 'dev')
+}
+
+/* Default profile dev로 지정 */
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
+
+/* profile 별 resource 폴더 지정 */
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources", "src/main/resources-${profile}"
+        }
+    }
 }
